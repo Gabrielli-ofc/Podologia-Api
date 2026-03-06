@@ -1,0 +1,78 @@
+//primeira linha do seu projeto. carrega as variaveis de ambiente antes de qualquer outro codigo
+import 'dotenv/config'
+ 
+// sintaxe de importação para todas as dependencias
+import express from 'express';
+import helmet from 'helmet';
+import morgan from 'morgan';
+import cors from 'cors';
+import path from 'path';
+import { fileURLToPath } from 'url'; // necessario para recriar o '_dirname'
+ 
+// Importando as rotas.
+ 
+// Importa as rotas de autenticação
+import authRoutes from './routes/authRoutes.js';
+ 
+import clienteRoutes from './routes/clienteRoutes.js';
+ 
+import agendamentoRoutes from './routes/angendamentoRoutes.js';
+
+import podologoRoutes from './routes/podologoRoutes.js';
+ 
+// Configuração
+const _filename = fileURLToPath(import.meta.url)
+const _dirname = path.dirname(_filename)
+const corsOptions = {
+    origin: ['http://localhost3333', 'https://meudominio.com'],
+    methods: 'GET, POST, PUT, PATCH, DELETE',
+    credentials: true,
+};
+ 
+//2. cria a nossa aplicação (nosso servidor)
+const app = express()
+ 
+// MIDDLEWARE
+app.use(helmet());
+app.use(cors(corsOptions));
+app.use(morgan('dev'));
+app.use(express.json());
+//servindo pasta public para arquivos (css,js,imagens)
+app.use(express.static(path.join(_dirname, '..','public')));
+ 
+//3. Define a porta em que o servidor vai 'escutar' os pedidos
+ 
+ 
+//rota principal dque serve a pagina HTML
+app.get('/', (request, response) => {
+    //req = Requesição (dados do pedido do cliente)
+    //res = Resposta (o que vamos enviar de volta)
+ 
+    //estamos enviando uma resposta no formato JSON
+    response.sendFile(path.join(_dirname,'..','pages','home.html'));
+})
+ 
+// Rotas da API prefixadas, isso evita conflitos e deixa claro quais rotas pertencem à API.
+const apiPrefix = '/api';
+// Rotas gerais da API (ex: /api/sandro)
+app.use(`${apiPrefix}/cliente`, clienteRoutes); // ex: /api/clientes/
+app.use(`${apiPrefix}/login`, authRoutes); // Rota de login ex: /api/login
+app.use(`${apiPrefix}/agendamento`, authRoutes);
+app.use(`${apiPrefix}/podologo`, authRoutes);
+ devicePixelRatio
+// --TRATAMENTO DE ERROS --
+app.use((err, req, res, next) => {
+    console.error(err.stack);
+    res.status(500).send('algo deu errado no servidor!')
+})
+ 
+//4. manda o servidor ficar "escutando" na porta definida
+const PORTA = process.env.PORT || 3333;
+app.listen(PORTA, () => {
+    console.log(`Servidor rodando na porta ${PORTA}`)
+})
+ 
+
+ 
+ 
+ 
