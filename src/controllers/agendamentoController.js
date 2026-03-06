@@ -4,22 +4,21 @@ import Joi from 'joi';
 export const agendamentoCreateSchema = Joi.object({
     dia: Joi.string().length(11).required(),
     horario: Joi.string().required(),
-    estado: Joi.string().required(),
+    valor: Joi.string().required(),
 
 });
 
 export const agendamentoUpdateSchema = Joi.object({
     dia: Joi.string(),
     horario: Joi.string(),
-    estado: Joi.string(),
-    valor: Joi.string();
-    cpfCli: Joi.string();
+    valor: Joi.string(),
+    
 
 }).min(1);
 
 export const listarAgendamento = async (req, res) => {
     try {
-    const agendamento = await agendamentoService.findAll();
+    const agendamento = await agendamentoService.findAll(req.body);
     res.status(200).json(agendamento);
 } catch (err) {
     console.error('Erro ao buscar agendamento:', err);
