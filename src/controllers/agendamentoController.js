@@ -14,7 +14,7 @@ export const agendamentoUpdateSchema = Joi.object({
     estado: Joi.string(),
     valor: Joi.string();
     cpfCli: Joi.string();
-    
+
 }).min(1);
 
 export const listarAgendamento = async (req, res) => {
